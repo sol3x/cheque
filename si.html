@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدیریت چک‌ها - آرتام رایان همتا</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', Arial, sans-serif;
+            direction: rtl;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #f8f9fa;
+        }
+        .navbar {
+            background-color: #004a99;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: slideDown 0.5s ease-out;
+        }
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .navbar-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .navbar-buttons button {
+            padding: 10px 20px;
+            background-color: #003366;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Vazirmatn', Arial, sans-serif;
+            font-size: 14px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .navbar-buttons button:hover {
+            background-color: #002244;
+            transform: translateY(-2px);
+        }
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            animation: slideUp 0.5s ease-out;
+        }
+        body.dark-mode form {
+            background-color: #2d2d2d;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        body.dark-mode label {
+            color: #f8f9fa;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Vazirmatn', Arial, sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        body.dark-mode input, body.dark-mode select {
+            background-color: #3d3d3d;
+            border-color: #555;
+            color: #f8f9fa;
+        }
+        input:focus, select:focus {
+            border-color: #004a99;
+            outline: none;
+            box-shadow: 0 0 8px rgba(0, 74, 153, 0.3);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-in;
+        }
+        body.dark-mode table {
+            background-color: #2d2d2d;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        body.dark-mode table, body.dark-mode th, body.dark-mode td {
+            border-color: #555;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #004a99;
+            color: white;
+            font-weight: bold;
+        }
+        td {
+            color: #555;
+        }
+        body.dark-mode td {
+            color: #f8f9fa;
+        }
+        .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Vazirmatn', Arial, sans-serif;
+            font-size: 14px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .delete-btn:hover {
+            background-color: #cc0000;
+            transform: scale(1.05);
+        }
+        .footer {
+            background-color: #004a99;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.5s ease-out;
+        }
+        .footer p {
+            margin: 0;
+            font-size: 14px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .pagination button {
+            padding: 8px 12px;
+            background-color: #004a99;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .pagination button:hover {
+            background-color: #003366;
+        }
+        .pagination button.active {
+            background-color: #003366;
+        }
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #004a99;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        .dark-mode-toggle:hover {
+            background-color: #003366;
+        }
+        .total-amount {
+            background-color: #004a99;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .total-amount span {
+            font-weight: bold;
+        }
+
+        /* انیمیشن‌ها */
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <h1>مدیریت چک‌ها - آرتام رایان همتا</h1>
+        <div class="navbar-buttons">
+            <button onclick="showPage('register')">ثبت چک</button>
+            <button onclick="showPage('view')">مشاهده چک‌ها</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- صفحه ثبت چک -->
+        <div id="registerPage" class="page active">
+            <form id="checkForm">
+                <label for="bankName">نام بانک:</label>
+                <input type="text" id="bankName" required>
+
+                <label for="ownerName">نام صاحب چک:</label>
+                <input type="text" id="ownerName" required>
+
+                <label for="serialNumber">شماره سریال چک:</label>
+                <input type="text" id="serialNumber" required>
+
+                <label for="checkDate">تاریخ چک (شمسی):</label>
+                <input type="text" id="checkDate" required>
+
+                <label for="amount">مبلغ چک:</label>
+                <input type="number" id="amount" required>
+
+                <label for="status">وضعیت چک:</label>
+                <select id="status">
+                    <option value="در جریان">در جریان</option>
+                    <option value="وصول شده">وصول شده</option>
+                    <option value="باطل شده">باطل شده</option>
+                </select>
+
+                <button type="submit">
+                    <i class="fas fa-save"></i>
+                    ذخیره چک
+                </button>
+            </form>
+        </div>
+
+        <!-- صفحه مشاهده چک‌ها -->
+        <div id="viewPage" class="page">
+            <div class="actions">
+                <button onclick="importExcel()">
+                    <i class="fas fa-file-import"></i>
+                    Import فایل اکسل
+                </button>
+                <button onclick="downloadSelectedRows()">
+                    <i class="fas fa-file-export"></i>
+                    دانلود ردیف‌های انتخابی
+                </button>
+                <button onclick="printTable()">
+                    <i class="fas fa-print"></i>
+                    چاپ گزارش
+                </button>
+                <button onclick="calculateTotalAmount()">
+                    <i class="fas fa-calculator"></i>
+                    محاسبه مجموع
+                </button>
+            </div>
+
+            <h2>لیست چک‌ها</h2>
+            <div class="search-filters">
+                <input type="text" id="searchOwnerInput" placeholder="نام صاحب چک را وارد کنید">
+                <input type="text" id="searchDateInput" placeholder="تاریخ چک را وارد کنید (شمسی)">
+                <button onclick="searchChecks()">
+                    <i class="fas fa-search"></i>
+                    جستجو
+                </button>
+            </div>
+
+            <table id="checkTable">
+                <thead>
+                    <tr>
+                        <th>انتخاب</th>
+                        <th>ردیف</th>
+                        <th>نام بانک</th>
+                        <th>نام صاحب چک</th>
+                        <th>شماره سریال چک</th>
+                        <th>تاریخ چک (شمسی)</th>
+                        <th>مبلغ چک</th>
+                        <th>وضعیت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <button onclick="changePage(-1)">قبلی</button>
+                <span id="pageNumber">1</span>
+                <button onclick="changePage(1)">بعدی</button>
+            </div>
+
+            <div class="total-amount">
+                مجموع مبالغ انتخاب‌شده: <span id="totalAmount">0</span> تومان
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>تمامی حقوق محفوظ است © ۲۰۲۳ - آرتام رایان همتا</p>
+        <p>این برنامه توسط pouria طراحی شده است.</p>
+    </div>
+
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        let checks = JSON.parse(localStorage.getItem('checks')) || [];
+        let rowCounter = checks.length + 1;
+        let currentPage = 1;
+        const rowsPerPage = 10;
+
+        // نمایش صفحه مورد نظر
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(`${pageId}Page`).classList.add('active');
+        }
+
+        // ثبت چک
+        document.getElementById('checkForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const bankName = document.getElementById('bankName').value;
+            const ownerName = document.getElementById('ownerName').value;
+            const serialNumber = document.getElementById('serialNumber').value;
+            const checkDate = document.getElementById('checkDate').value;
+            const amount = document.getElementById('amount').value;
+            const status = document.getElementById('status').value;
+
+            if (!bankName || !ownerName || !serialNumber || !checkDate || !amount) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا',
+                    text: 'لطفاً تمام فیلدها را پر کنید!',
+                });
+                return;
+            }
+
+            const check = {
+                row: rowCounter++,
+                bankName,
+                ownerName,
+                serialNumber,
+                checkDate,
+                amount,
+                status,
+                selected: false
+            };
+
+            checks.push(check);
+            localStorage.setItem('checks', JSON.stringify(checks));
+            updateTable();
+            document.getElementById('checkForm').reset();
+            Swal.fire({
+                icon: 'success',
+                title: 'موفقیت‌آمیز',
+                text: 'چک با موفقیت ثبت شد!',
+            });
+        });
+
+        // به‌روزرسانی جدول
+        function updateTable() {
+            const tbody = document.querySelector('#checkTable tbody');
+            tbody.innerHTML = '';
+
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const paginatedChecks = checks.slice(start, end);
+
+            paginatedChecks.forEach((check, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox" onchange="toggleSelect(${start + index})" ${check.selected ? 'checked' : ''}></td>
+                    <td>${check.row}</td>
+                    <td>${check.bankName}</td>
+                    <td>${check.ownerName}</td>
+                    <td>${check.serialNumber}</td>
+                    <td>${check.checkDate}</td>
+                    <td>${check.amount}</td>
+                    <td>${check.status}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteCheck(${start + index})"><i class="fas fa-trash"></i> حذف</button>
+                        <button class="edit-btn" onclick="editCheck(${start + index})"><i class="fas fa-edit"></i> ویرایش</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('pageNumber').textContent = currentPage;
+        }
+
+        // تغییر وضعیت انتخاب چک‌ها
+        function toggleSelect(index) {
+            checks[index].selected = !checks[index].selected;
+            localStorage.setItem('checks', JSON.stringify(checks));
+            calculateTotalAmount();
+        }
+
+        // تغییر صفحه
+        function changePage(direction) {
+            currentPage += direction;
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > Math.ceil(checks.length / rowsPerPage)) currentPage = Math.ceil(checks.length / rowsPerPage);
+            updateTable();
+        }
+
+        // جستجو
+        function searchChecks() {
+            const searchOwner = document.getElementById('searchOwnerInput').value.toLowerCase();
+            const searchDate = document.getElementById('searchDateInput').value;
+
+            const filteredChecks = checks.filter(check => {
+                const matchesOwner = searchOwner ? check.ownerName.toLowerCase().includes(searchOwner) : true;
+                const matchesDate = searchDate ? check.checkDate === searchDate : true;
+                return matchesOwner && matchesDate;
+            });
+
+            checks = filteredChecks;
+            updateTable();
+        }
+
+        // حذف چک
+        function deleteCheck(index) {
+            Swal.fire({
+                title: 'آیا مطمئن هستید؟',
+                text: 'این چک حذف خواهد شد!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'بله، حذف کن!',
+                cancelButtonText: 'لغو'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    checks.splice(index, 1);
+                    localStorage.setItem('checks', JSON.stringify(checks));
+                    updateTable();
+                    Swal.fire('حذف شد!', 'چک با موفقیت حذف شد.', 'success');
+                }
+            });
+        }
+
+        // ویرایش چک
+        function editCheck(index) {
+            const check = checks[index];
+            document.getElementById('bankName').value = check.bankName;
+            document.getElementById('ownerName').value = check.ownerName;
+            document.getElementById('serialNumber').value = check.serialNumber;
+            document.getElementById('checkDate').value = check.checkDate;
+            document.getElementById('amount').value = check.amount;
+            document.getElementById('status').value = check.status;
+
+            checks.splice(index, 1);
+            localStorage.setItem('checks', JSON.stringify(checks));
+            updateTable();
+        }
+
+        // دانلود ردیف‌های انتخابی
+        function downloadSelectedRows() {
+            const selectedChecks = checks.filter(check => check.selected);
+            if (selectedChecks.length === 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطا',
+                    text: 'لطفاً حداقل یک ردیف را انتخاب کنید!',
+                });
+                return;
+            }
+
+            const ws = XLSX.utils.json_to_sheet(selectedChecks);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Checks");
+            XLSX.writeFile(wb, "selected_checks.xlsx");
+        }
+
+        // چاپ جدول
+        function printTable() {
+            window.print();
+        }
+
+        // محاسبه مجموع مبالغ
+        function calculateTotalAmount() {
+            const selectedChecks = checks.filter(check => check.selected);
+            const totalAmount = selectedChecks.reduce((sum, check) => sum + Number(check.amount), 0);
+            document.getElementById('totalAmount').textContent = totalAmount.toLocaleString();
+        }
+
+        // Import فایل اکسل
+        function importExcel() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.xlsx, .xls';
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const json = XLSX.utils.sheet_to_json(sheet);
+
+                    json.forEach(item => {
+                        const check = {
+                            row: rowCounter++,
+                            bankName: item['نام بانک'],
+                            ownerName: item['نام صاحب چک'],
+                            serialNumber: item['شماره سریال چک'],
+                            checkDate: item['تاریخ چک (شمسی)'],
+                            amount: item['مبلغ چک'],
+                            status: item['وضعیت'],
+                            selected: false
+                        };
+                        checks.push(check);
+                    });
+
+                    localStorage.setItem('checks', JSON.stringify(checks));
+                    updateTable();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'موفقیت‌آمیز',
+                        text: 'داده‌ها با موفقیت وارد شدند!',
+                    });
+                };
+                reader.readAsArrayBuffer(file);
+            };
+            input.click();
+        }
+
+        // تغییر تم
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+        }
+
+        // بارگذاری تم تاریک
+        function loadDarkMode() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) document.body.classList.add('dark-mode');
+        }
+
+        loadDarkMode();
+        updateTable();
+    </script>
+</body>
+</html>
